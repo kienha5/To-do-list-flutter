@@ -3,11 +3,13 @@ import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import '../models/todo.dart';
 
+import 'package:flutter/foundation.dart' show kIsWeb;
+
 class NotificationService {
   NotificationService._();
   static final NotificationService instance = NotificationService._();
 
-  /// Duration before deadline to show the reminder notification
+  // Duration before deadline to show the reminder notification
   static const reminderBefore = Duration(minutes: 1);
 
   final _plugin = FlutterLocalNotificationsPlugin();
@@ -21,6 +23,8 @@ class NotificationService {
   );
 
   Future<void> init() async {
+    if (kIsWeb) return;
+
     tz.initializeTimeZones();
     tz.setLocalLocation(tz.getLocation('Asia/Ho_Chi_Minh'));
 
@@ -37,6 +41,8 @@ class NotificationService {
   }
 
   Future<void> scheduleReminder(Todo todo) async {
+    if (kIsWeb) return;
+
     final due = todo.dueAt;
     if (due == null) return;
 
@@ -56,5 +62,8 @@ class NotificationService {
     );
   }
 
-  Future<void> cancel(int id) => _plugin.cancel(id: id);
+  Future<void> cancel(int id) async {
+  if (kIsWeb) return;
+  await _plugin.cancel(id: id);
+  }
 }

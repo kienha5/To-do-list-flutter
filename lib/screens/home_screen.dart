@@ -118,60 +118,66 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
       body: _loading
           ? const Center(child: CircularProgressIndicator())
-          : Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-                  child: TextField(
-                    decoration: const InputDecoration(
-                      prefixIcon: Icon(Icons.search),
-                      hintText: 'Tìm kiếm ghi chú',
-                      border: OutlineInputBorder(),
-                    ),
-                    onChanged: (v) => setState(() => _query = v),
-                  ),
-                ),
-                SegmentedButton<TodoFilter>(
-                  segments: const [
-                    ButtonSegment(value: TodoFilter.all, label: Text('All')),
-                    ButtonSegment(value: TodoFilter.today, label: Text('Today')),
-                    ButtonSegment(
-                        value: TodoFilter.upcoming, label: Text('Upcoming')),
-                  ],
-                  selected: {_filter},
-                  onSelectionChanged: (s) => setState(() => _filter = s.first),
-                ),
-                const SizedBox(height: 8),
-                Expanded(
-                  child: visible.isEmpty
-                      ? const Center(child: Text('Không có ghi chú nào'))
-                      : ListView.builder(
-                          itemCount: visible.length,
-                          itemBuilder: (context, i) {
-                            final t = visible[i];
-                            final due = t.dueAt;
-                            final overdue =
-                                due != null && due.isBefore(DateTime.now());
-                            return ListTile(
-                              key: ValueKey(t.id),
-                              leading: Checkbox(
-                                value: _selected.contains(t.id),
-                                onChanged: (_) => _toggleSelected(t.id),
-                              ),
-                              title: Text(t.title),
-                              subtitle: due == null
-                                  ? null
-                                  : Text(
-                                      formatDue(due),
-                                      style: TextStyle(
-                                          color: overdue ? Colors.red : null),
-                                    ),
-                              onTap: () => _toggleSelected(t.id),
-                            );
-                          },
+          : Align(
+              alignment: Alignment.topCenter,
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 600),
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+                      child: TextField(
+                        decoration: const InputDecoration(
+                          prefixIcon: Icon(Icons.search),
+                          hintText: 'Tìm kiếm ghi chú',
+                          border: OutlineInputBorder(),
                         ),
+                        onChanged: (v) => setState(() => _query = v),
+                      ),
+                    ),
+                    SegmentedButton<TodoFilter>(
+                      segments: const [
+                        ButtonSegment(value: TodoFilter.all, label: Text('All')),
+                        ButtonSegment(value: TodoFilter.today, label: Text('Today')),
+                        ButtonSegment(
+                            value: TodoFilter.upcoming, label: Text('Upcoming')),
+                      ],
+                      selected: {_filter},
+                      onSelectionChanged: (s) => setState(() => _filter = s.first),
+                    ),
+                    const SizedBox(height: 8),
+                    Expanded(
+                      child: visible.isEmpty
+                          ? const Center(child: Text('Không có ghi chú nào'))
+                          : ListView.builder(
+                              itemCount: visible.length,
+                              itemBuilder: (context, i) {
+                                final t = visible[i];
+                                final due = t.dueAt;
+                                final overdue =
+                                    due != null && due.isBefore(DateTime.now());
+                                return ListTile(
+                                  key: ValueKey(t.id),
+                                  leading: Checkbox(
+                                    value: _selected.contains(t.id),
+                                    onChanged: (_) => _toggleSelected(t.id),
+                                  ),
+                                  title: Text(t.title),
+                                  subtitle: due == null
+                                      ? null
+                                      : Text(
+                                          formatDue(due),
+                                          style: TextStyle(
+                                              color: overdue ? Colors.red : null),
+                                        ),
+                                  onTap: () => _toggleSelected(t.id),
+                                );
+                              },
+                            ),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
     );
   }
